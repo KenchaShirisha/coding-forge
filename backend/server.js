@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 const SECRET = process.env.JWT_SECRET || "mysecretkey";
 
 app.use(cors({
@@ -35,6 +35,9 @@ const User = mongoose.model("User", new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
   password: String
 }));
+
+// Health check endpoint
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // SIGNUP
 app.post("/api/auth/signup", async (req, res) => {
@@ -79,5 +82,12 @@ app.post("/api/auth/login", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running → http://localhost:${PORT}`);
-  console.log(`📁 Serving files from: ${staticDir}`);
+
+  // Keep-alive ping every 14 mins to prevent Render free tier sleep
+  const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
+  if (RENDER_URL) {
+    setInterval(() => {
+      fetch(RENDER_URL + '/health').catch(() => {});
+    }, 14 * 60 * 1000);
+  }
 });
