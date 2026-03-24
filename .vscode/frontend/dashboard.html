@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Dashboard</h2>
+
+<p id="userInfo">Loading...</p>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+async function loadDashboard() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Not logged in!");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const res = await fetch("http://localhost:5001/api/dashboard", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    const data = await res.json();
+
+    if (data.user) {
+        document.getElementById("userInfo").innerText =
+            "Welcome " + data.user.email;
+    } else {
+        alert("Session expired");
+        localStorage.removeItem("token");
+        window.location.href = "index.html";
+    }
+}
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "index.html";
+}
+
+// Load dashboard on page load
+loadDashboard();
+</script>
+
+</body>
+</html>

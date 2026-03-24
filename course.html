@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coding Forge - Courses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background: #0f172a; min-height: 100vh; color: #f1f5f9; }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 64px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 20px; font-weight: 700; color: #60a5fa; }
+    .nav-links { display: flex; gap: 6px; }
+    .nav-links button {
+      padding: 7px 16px; border: none; border-radius: 8px;
+      background: transparent; color: #94a3b8;
+      cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s;
+    }
+    .nav-links button:hover { background: #334155; color: #f1f5f9; }
+    .nav-links button.active { background: #2563eb; color: white; }
+    .logout-btn {
+      padding: 7px 16px; border: none; border-radius: 8px;
+      background: #dc2626; color: white; cursor: pointer;
+      font-size: 14px; font-weight: 500; transition: 0.2s;
+    }
+    .logout-btn:hover { background: #b91c1c; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 60px 32px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    .hero h1 { font-size: 40px; font-weight: 700; margin-bottom: 12px; }
+    .hero h1 span { color: #60a5fa; }
+    .hero p { font-size: 16px; color: #94a3b8; max-width: 500px; margin: 0 auto 32px; line-height: 1.7; }
+    .course-cards {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    }
+    .course-card {
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 12px; padding: 20px 24px;
+      width: 180px; cursor: pointer; transition: 0.2s;
+      text-align: center;
+    }
+    .course-card:hover { border-color: #2563eb; transform: translateY(-3px); background: #1e3a5f; }
+    .course-card.active { border-color: #2563eb; background: #1e3a5f; }
+    .course-card .emoji { font-size: 32px; margin-bottom: 8px; }
+    .course-card .name { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+    .course-card .level { font-size: 12px; color: #60a5fa; margin-top: 4px; }
+
+    /* CONTENT */
+    #content { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+    /* HOME STATS */
+    .stats { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
+    .stat-card {
+      flex: 1; min-width: 160px;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 12px; padding: 20px;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 28px; font-weight: 700; color: #60a5fa; }
+    .stat-card .label { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+
+    /* COURSE DETAIL */
+    .course-header {
+      display: flex; align-items: center; gap: 16px;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 12px; padding: 24px; margin-bottom: 24px;
+    }
+    .course-header .big-emoji { font-size: 52px; }
+    .course-header h2 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+    .course-header p { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+    .badge {
+      display: inline-block; padding: 3px 10px;
+      background: rgba(96,165,250,0.15); color: #60a5fa;
+      border-radius: 20px; font-size: 12px; font-weight: 500; margin-top: 8px;
+    }
+
+    .section-title { font-size: 18px; font-weight: 600; color: #f1f5f9; margin-bottom: 14px; margin-top: 28px; }
+
+    .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .topic-card {
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 10px; padding: 16px;
+      display: flex; align-items: flex-start; gap: 12px;
+      transition: 0.2s;
+    }
+    .topic-card:hover { border-color: #2563eb; }
+    .topic-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .topic-name { font-size: 14px; font-weight: 500; color: #f1f5f9; }
+    .topic-desc { font-size: 12px; color: #64748b; margin-top: 3px; }
+
+    .code-block {
+      background: #0f172a; border: 1px solid #334155;
+      border-radius: 10px; padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px; color: #a5f3fc;
+      overflow-x: auto; margin-top: 12px;
+      line-height: 1.8;
+    }
+    .code-block .comment { color: #475569; }
+    .code-block .keyword { color: #818cf8; }
+    .code-block .string { color: #86efac; }
+    .code-block .fn { color: #fbbf24; }
+
+    .why-learn {
+      background: linear-gradient(135deg, #1e3a5f, #1e293b);
+      border: 1px solid #2563eb;
+      border-radius: 12px; padding: 20px 24px; margin-top: 24px;
+    }
+    .why-learn h3 { font-size: 16px; font-weight: 600; color: #60a5fa; margin-bottom: 12px; }
+    .why-learn ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .why-learn ul li { font-size: 14px; color: #cbd5e1; display: flex; align-items: center; gap: 8px; }
+    .why-learn ul li::before { content: '✓'; color: #22c55e; font-weight: 700; }
+
+    .start-btn {
+      display: inline-block; margin-top: 24px;
+      padding: 12px 28px; background: #2563eb;
+      color: white; border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.2s;
+    }
+    .start-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">⚡ Coding Forge</div>
+    <div class="nav-links">
+      <button onclick="showHome()" id="btn-home" class="active">🏠 Home</button>
+      <button onclick="showCourse('javascript')" id="btn-javascript">JS</button>
+      <button onclick="showCourse('python')" id="btn-python">Python</button>
+      <button onclick="showCourse('java')" id="btn-java">Java</button>
+      <button onclick="showCourse('cpp')" id="btn-cpp">C++</button>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </nav>
+
+  <div id="content"></div>
+
+  <script>
+    if (!localStorage.getItem('token')) {
+      window.location.href = '/login.html';
+    }
+
+    const courses = {
+      javascript: {
+        emoji: '🟨',
+        title: 'JavaScript',
+        desc: 'JavaScript is the language of the web. It powers interactive websites, web apps, and server-side development with Node.js. It is the most popular programming language in the world.',
+        level: 'Beginner to Advanced',
+        topics: [
+          { icon: '📦', name: 'Variables & Data Types', desc: 'var, let, const — strings, numbers, booleans, arrays, objects' },
+          { icon: '🔁', name: 'Loops & Conditionals', desc: 'for, while, if/else, switch statements' },
+          { icon: '⚙️', name: 'Functions & Scope', desc: 'Function declarations, arrow functions, closures, hoisting' },
+          { icon: '🌐', name: 'DOM Manipulation', desc: 'Select, create, modify and delete HTML elements' },
+          { icon: '🖱️', name: 'Events', desc: 'Click, input, submit events and event listeners' },
+          { icon: '🔗', name: 'Async / Promises / Fetch', desc: 'Callbacks, Promises, async/await, API calls' },
+          { icon: '🧱', name: 'ES6+ Features', desc: 'Destructuring, spread, template literals, modules' },
+          { icon: '🗂️', name: 'Arrays & Objects', desc: 'map, filter, reduce, Object methods' },
+        ],
+        why: ['Most in-demand language for web development', 'Runs in every browser — no setup needed', 'Used for frontend, backend (Node.js), and mobile (React Native)', 'Huge ecosystem with npm packages'],
+        sample: `<span class="comment">// JavaScript Example</span>
+<span class="keyword">const</span> greet = (<span class="fn">name</span>) => {
+  <span class="keyword">return</span> <span class="string">\`Hello, \${name}! Welcome to Coding Forge.\`</span>;
+};
+
+<span class="comment">// Fetch data from an API</span>
+<span class="keyword">async function</span> <span class="fn">getData</span>() {
+  <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">'/api/data'</span>);
+  <span class="keyword">const</span> data = <span class="keyword">await</span> res.json();
+  console.log(data);
+}
+
+console.log(<span class="fn">greet</span>(<span class="string">'Developer'</span>));`
+      },
+      python: {
+        emoji: '🐍',
+        title: 'Python',
+        desc: 'Python is a clean, readable language used for data science, machine learning, automation, and backend web development. It is the #1 language for AI and data.',
+        level: 'Beginner Friendly',
+        topics: [
+          { icon: '📦', name: 'Variables & Data Types', desc: 'int, float, string, list, tuple, dict, set' },
+          { icon: '🔁', name: 'Loops & Conditionals', desc: 'for, while, if/elif/else, list comprehensions' },
+          { icon: '⚙️', name: 'Functions & Modules', desc: 'def, lambda, *args, **kwargs, imports' },
+          { icon: '📂', name: 'File Handling', desc: 'Read, write, append files using open()' },
+          { icon: '🧱', name: 'OOP in Python', desc: 'Classes, objects, inheritance, __init__' },
+          { icon: '⚠️', name: 'Exception Handling', desc: 'try, except, finally, custom exceptions' },
+          { icon: '📊', name: 'NumPy & Pandas', desc: 'Arrays, DataFrames, data manipulation' },
+          { icon: '🌐', name: 'Flask / Django Basics', desc: 'Build web APIs and web apps with Python' },
+        ],
+        why: ['Easiest language to learn for beginners', '#1 language for AI, ML and Data Science', 'Used at Google, Netflix, Instagram', 'Massive library ecosystem (pip)'],
+        sample: `<span class="comment"># Python Example</span>
+<span class="keyword">def</span> <span class="fn">greet</span>(name):
+    <span class="keyword">return</span> <span class="string">f"Hello, {name}! Welcome to Coding Forge."</span>
+
+<span class="comment"># List comprehension</span>
+squares = [x**2 <span class="keyword">for</span> x <span class="keyword">in</span> range(1, 6)]
+print(squares)  <span class="comment"># [1, 4, 9, 16, 25]</span>
+
+<span class="comment"># Class example</span>
+<span class="keyword">class</span> <span class="fn">Student</span>:
+    <span class="keyword">def</span> <span class="fn">__init__</span>(self, name, grade):
+        self.name = name
+        self.grade = grade
+
+print(<span class="fn">greet</span>(<span class="string">"Developer"</span>))`
+      },
+      java: {
+        emoji: '☕',
+        title: 'Java',
+        desc: 'Java is a powerful, object-oriented language used for enterprise backend systems, Android app development, and large-scale applications. Write once, run anywhere.',
+        level: 'Intermediate',
+        topics: [
+          { icon: '🧱', name: 'Classes & Objects', desc: 'OOP fundamentals, constructors, instance variables' },
+          { icon: '🔗', name: 'Inheritance & Polymorphism', desc: 'extends, super, method overriding, overloading' },
+          { icon: '📋', name: 'Interfaces & Abstract Classes', desc: 'implements, abstract methods, default methods' },
+          { icon: '📦', name: 'Collections Framework', desc: 'ArrayList, HashMap, HashSet, LinkedList' },
+          { icon: '⚠️', name: 'Exception Handling', desc: 'try-catch-finally, checked vs unchecked exceptions' },
+          { icon: '🔀', name: 'Multithreading', desc: 'Thread class, Runnable, synchronized blocks' },
+          { icon: '📂', name: 'File I/O', desc: 'FileReader, BufferedReader, FileWriter' },
+          { icon: '🌐', name: 'Spring Boot Basics', desc: 'REST APIs, annotations, dependency injection' },
+        ],
+        why: ['Used in 3 billion+ devices worldwide', 'Top language for Android development', 'Widely used in enterprise and banking systems', 'Strong typing makes code reliable and maintainable'],
+        sample: `<span class="comment">// Java Example</span>
+<span class="keyword">public class</span> <span class="fn">Main</span> {
+
+    <span class="keyword">static</span> String <span class="fn">greet</span>(String name) {
+        <span class="keyword">return</span> <span class="string">"Hello, " + name + "! Welcome to Coding Forge."</span>;
+    }
+
+    <span class="keyword">public static void</span> <span class="fn">main</span>(String[] args) {
+        System.out.println(<span class="fn">greet</span>(<span class="string">"Developer"</span>));
+
+        <span class="comment">// ArrayList example</span>
+        ArrayList&lt;String&gt; courses = <span class="keyword">new</span> ArrayList&lt;&gt;();
+        courses.add(<span class="string">"Java"</span>);
+        courses.add(<span class="string">"Python"</span>);
+        System.out.println(courses);
+    }
+}`
+      },
+      cpp: {
+        emoji: '⚙️',
+        title: 'C++',
+        desc: 'C++ is a high-performance language used for system programming, game development, competitive programming, and applications where speed is critical.',
+        level: 'Intermediate to Advanced',
+        topics: [
+          { icon: '🔗', name: 'Pointers & References', desc: 'Memory addresses, pointer arithmetic, references' },
+          { icon: '🧠', name: 'Memory Management', desc: 'new, delete, stack vs heap, memory leaks' },
+          { icon: '📚', name: 'STL - Vectors', desc: 'Dynamic arrays, iterators, algorithms' },
+          { icon: '🗺️', name: 'STL - Maps & Sets', desc: 'Key-value pairs, ordered and unordered containers' },
+          { icon: '🧱', name: 'OOP in C++', desc: 'Classes, constructors, destructors, inheritance' },
+          { icon: '📋', name: 'Templates', desc: 'Generic programming, function and class templates' },
+          { icon: '⚡', name: 'Competitive Programming', desc: 'Sorting, searching, dynamic programming, graphs' },
+          { icon: '🎮', name: 'File Handling & I/O', desc: 'fstream, cin/cout, file read/write' },
+        ],
+        why: ['Fastest language — used in game engines like Unreal', 'Essential for competitive programming (ICPC, Codeforces)', 'Used in operating systems, browsers, and databases', 'Gives deep understanding of how computers work'],
+        sample: `<span class="comment">// C++ Example</span>
+<span class="keyword">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">using namespace</span> std;
+
+string <span class="fn">greet</span>(string name) {
+    <span class="keyword">return</span> <span class="string">"Hello, " + name + "! Welcome to Coding Forge."</span>;
+}
+
+<span class="keyword">int</span> <span class="fn">main</span>() {
+    cout &lt;&lt; <span class="fn">greet</span>(<span class="string">"Developer"</span>) &lt;&lt; endl;
+
+    <span class="comment">// Vector example</span>
+    vector&lt;<span class="keyword">int</span>&gt; nums = {1, 2, 3, 4, 5};
+    <span class="keyword">for</span> (<span class="keyword">int</span> n : nums) cout &lt;&lt; n &lt;&lt; <span class="string">" "</span>;
+    <span class="keyword">return</span> 0;
+}`
+      }
+    };
+
+    function setActive(id) {
+      document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function showHome() {
+      setActive('btn-home');
+      document.getElementById('content').innerHTML = `
+        <div class="hero">
+          <h1>Welcome to <span>Coding Forge</span> ⚡</h1>
+          <p>Your all-in-one platform to master programming. Pick a course and start building real skills today.</p>
+          <div class="course-cards">
+            <div class="course-card" onclick="showCourse('javascript')">
+              <div class="emoji">🟨</div>
+              <div class="name">JavaScript</div>
+              <div class="level">Web Development</div>
+            </div>
+            <div class="course-card" onclick="showCourse('python')">
+              <div class="emoji">🐍</div>
+              <div class="name">Python</div>
+              <div class="level">Data Science & AI</div>
+            </div>
+            <div class="course-card" onclick="showCourse('java')">
+              <div class="emoji">☕</div>
+              <div class="name">Java</div>
+              <div class="level">Backend & Android</div>
+            </div>
+            <div class="course-card" onclick="showCourse('cpp')">
+              <div class="emoji">⚙️</div>
+              <div class="name">C++</div>
+              <div class="level">Systems & DSA</div>
+            </div>
+          </div>
+        </div>
+        <div id="content" style="max-width:900px;margin:0 auto;padding:40px 24px;">
+          <div class="stats">
+            <div class="stat-card"><div class="num">4</div><div class="label">Courses Available</div></div>
+            <div class="stat-card"><div class="num">30+</div><div class="label">Topics Covered</div></div>
+            <div class="stat-card"><div class="num">100%</div><div class="label">Free to Learn</div></div>
+            <div class="stat-card"><div class="num">∞</div><div class="label">Access Forever</div></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showCourse(course) {
+      const c = courses[course];
+      if (!c) return;
+      setActive('btn-' + course);
+      document.getElementById('content').innerHTML = `
+        <div class="course-header">
+          <div class="big-emoji">${c.emoji}</div>
+          <div>
+            <h2>${c.title}</h2>
+            <p>${c.desc}</p>
+            <span class="badge">📊 ${c.level}</span>
+          </div>
+        </div>
+
+        <div class="section-title">📚 What You'll Learn</div>
+        <div class="topics-grid">
+          ${c.topics.map(t => `
+            <div class="topic-card">
+              <div class="topic-icon">${t.icon}</div>
+              <div>
+                <div class="topic-name">${t.name}</div>
+                <div class="topic-desc">${t.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="section-title">💻 Sample Code</div>
+        <div class="code-block">${c.sample}</div>
+
+        <div class="why-learn">
+          <h3>🎯 Why Learn ${c.title}?</h3>
+          <ul>${c.why.map(w => `<li>${w}</li>`).join('')}</ul>
+        </div>
+
+        <button class="start-btn" onclick="alert('Course content coming soon! 🚀')">
+          🚀 Start Learning ${c.title}
+        </button>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = '/login.html';
+    }
+
+    // Show home on load
+    showHome();
+  </script>
+</body>
+</html>

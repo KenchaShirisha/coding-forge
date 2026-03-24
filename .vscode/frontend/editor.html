@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Code Forge IDE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Monaco Editor Loader -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #020617;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 10px 0;
+    }
+
+    .sidebar a:hover {
+      color: #38bdf8;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      padding: 10px;
+      background: #020617;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    select, button {
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background: #38bdf8;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #editor {
+      flex: 1;
+    }
+
+    .output {
+      height: 200px;
+      background: black;
+      padding: 10px;
+      overflow: auto;
+      border-top: 1px solid #333;
+    }
+
+    @media(max-width:768px){
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body onload="checkAuth()">
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Code Forge</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="courses.html">Courses</a>
+    <a href="practice.html">Practice</a>
+    <a href="editor.html">IDE</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Top Controls -->
+    <div class="topbar">
+      <select id="language">
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="java">Java</option>
+        <option value="cpp">C++</option>
+      </select>
+
+      <button onclick="runCode()">Run</button>
+    </div>
+
+    <!-- Editor -->
+    <div id="editor"></div>
+
+    <!-- Output -->
+    <div class="output" id="output">Output will appear here...</div>
+
+  </div>
+
+</div>
+
+<script>
+  function checkAuth() {
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+
+  // Monaco Editor Setup
+  let editor;
+
+  require.config({
+    paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs" }
+  });
+
+  require(["vs/editor/editor.main"], function () {
+    editor = monaco.editor.create(document.getElementById("editor"), {
+      value: "// Write your code here\nconsole.log('Hello Code Forge');",
+      language: "javascript",
+      theme: "vs-dark",
+      automaticLayout: true
+    });
+  });
+
+  // Language Mapping
+  const langMap = {
+    javascript: "javascript",
+    python: "python",
+    java: "java",
+    cpp: "cpp"
+  };
+
+  document.getElementById("language").addEventListener("change", function () {
+    const lang = this.value;
+    monaco.editor.setModelLanguage(editor.getModel(), langMap[lang]);
+  });
+
+  // Run Code using Piston API
+  async function runCode() {
+    const code = editor.getValue();
+    const language = document.getElementById("language").value;
+
+    const outputDiv = document.getElementById("output");
+    outputDiv.innerText = "Running...";
+
+    let payload = {
+      language: language,
+      version: "*",
+      files: [
+        {
+          content: code
+        }
+      ]
+    };
+
+    try {
+      const res = await fetch("https://emkc.org/api/v2/piston/execute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      outputDiv.innerText =
+        data.run.stdout ||
+        data.run.stderr ||
+        "No output";
+    } catch (err) {
+      outputDiv.innerText = "Error executing code";
+    }
+  }
+</script>
+
+</body>
+</html>

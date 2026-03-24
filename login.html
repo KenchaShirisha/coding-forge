@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coding Forge - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    .left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+      color: white;
+    }
+    .left .brand { font-size: 32px; font-weight: 700; color: #60a5fa; margin-bottom: 20px; }
+    .left h1 { font-size: 42px; font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+    .left h1 span { color: #60a5fa; }
+    .left p { font-size: 16px; color: #94a3b8; line-height: 1.7; max-width: 420px; margin-bottom: 32px; }
+    .features { display: flex; flex-direction: column; gap: 14px; }
+    .feature { display: flex; align-items: center; gap: 12px; font-size: 15px; color: #cbd5e1; }
+    .feature .icon { width: 36px; height: 36px; background: rgba(96,165,250,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .right {
+      width: 460px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .card {
+      width: 100%;
+      background: #ffffff;
+      padding: 36px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .card-title { font-size: 22px; font-weight: 600; color: #0f172a; margin-bottom: 4px; }
+    .card-sub { font-size: 13px; color: #64748b; margin-bottom: 28px; }
+    .input-group { margin-bottom: 18px; }
+    .input-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155; }
+    .input-group input {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid #e2e8f0; border-radius: 8px;
+      outline: none; font-size: 14px; transition: 0.2s;
+      color: #0f172a;
+    }
+    .input-group input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .error { color: #ef4444; font-size: 12px; margin-top: 4px; display: none; }
+    .options { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 20px; color: #64748b; }
+    .options a { text-decoration: none; color: #2563eb; font-weight: 500; }
+    .btn {
+      width: 100%; padding: 12px;
+      background: #2563eb; color: white;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: 0.2s;
+    }
+    .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn:disabled { background: #93c5fd; cursor: not-allowed; transform: none; }
+    .msg { text-align: center; font-size: 13px; margin-top: 12px; padding: 8px; border-radius: 6px; display: none; }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; color: #94a3b8; font-size: 13px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+    .social { display: flex; gap: 10px; }
+    .social button {
+      flex: 1; padding: 10px; border: 1.5px solid #e2e8f0;
+      border-radius: 8px; background: white; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: #334155; transition: 0.2s;
+    }
+    .social button:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .bottom { text-align: center; margin-top: 20px; font-size: 13px; color: #64748b; }
+    .bottom a { color: #2563eb; text-decoration: none; font-weight: 500; }
+    @media (max-width: 768px) {
+      .left { display: none; }
+      .right { width: 100%; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand">⚡ Coding Forge</div>
+    <h1>Learn to Code.<br><span>Build the Future.</span></h1>
+    <p>Master programming with hands-on courses in JavaScript, Python, Java, and C++. Join thousands of developers leveling up their skills.</p>
+    <div class="features">
+      <div class="feature"><div class="icon">📚</div> Structured courses for all levels</div>
+      <div class="feature"><div class="icon">🎯</div> Real-world projects and examples</div>
+      <div class="feature"><div class="icon">🚀</div> Learn at your own pace</div>
+      <div class="feature"><div class="icon">🏆</div> Track your progress</div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="card">
+      <div class="card-title">Welcome back 👋</div>
+      <div class="card-sub">Login to continue your learning journey</div>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+          <div class="error" id="emailError">Enter a valid email address</div>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <div class="error" id="passwordError">Password must be at least 6 characters</div>
+        </div>
+        <div class="options">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" style="width:auto;"> Remember me
+          </label>
+          <a href="#">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn" id="loginBtn">Login</button>
+        <div class="msg" id="msg"></div>
+      </form>
+
+      <div class="divider">or continue with</div>
+      <div class="social">
+        <button type="button">🌐 Google</button>
+        <button type="button">🐙 GitHub</button>
+      </div>
+      <div class="bottom">Don't have an account? <a href="/signup.html">Sign up for free</a></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const msg = document.getElementById('msg');
+      let valid = true;
+
+      document.getElementById('emailError').style.display = !email.includes('@') ? 'block' : 'none';
+      if (!email.includes('@')) valid = false;
+      document.getElementById('passwordError').style.display = password.length < 6 ? 'block' : 'none';
+      if (password.length < 6) valid = false;
+      if (!valid) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+      msg.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          localStorage.setItem('token', data.token);
+          msg.style.display = 'block';
+          msg.style.background = '#f0fdf4';
+          msg.style.color = '#16a34a';
+          msg.textContent = '✅ Login successful! Redirecting...';
+          setTimeout(() => window.location.href = '/course.html', 1000);
+        } else {
+          msg.style.display = 'block';
+          msg.style.background = '#fef2f2';
+          msg.style.color = '#dc2626';
+          msg.textContent = '❌ ' + (data.message || 'Login failed');
+        }
+      } catch {
+        msg.style.display = 'block';
+        msg.style.background = '#fef2f2';
+        msg.style.color = '#dc2626';
+        msg.textContent = '❌ Cannot connect to server.';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Login';
+    });
+  </script>
+</body>
+</html>
