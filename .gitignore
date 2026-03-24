@@ -1,7 +1,4 @@
+node_modules/
 .env
 .env.txt
-backend/.env
-node_modules/
-backend/node_modules/
-Desktop.lnk
-*.lnk
+package-lock.json
